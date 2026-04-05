@@ -1,5 +1,6 @@
-const API_KEY = "DEMO_KEY"; // replace with your NASA API key
+const API_KEY = "DEMO_KEY"; // 👉 Replace with your NASA API key for better performance
 
+// Run when page loads
 document.addEventListener("DOMContentLoaded", () => {
     getCurrentImageOfTheDay();
     addSearchToHistory();
@@ -15,9 +16,15 @@ function getCurrentImageOfTheDay() {
 function getImageOfTheDay(date) {
     const today = new Date().toISOString().split("T")[0];
 
-    // ❌ Prevent future date
+    // 🚫 Prevent future date
     if (date > today) {
         showError("Future dates are not allowed.");
+        return;
+    }
+
+    // 🚫 Check correct format
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        showError("Invalid date format. Use YYYY-MM-DD.");
         return;
     }
 
@@ -25,7 +32,7 @@ function getImageOfTheDay(date) {
     saveSearch(date);
 }
 
-// 🔁 Fetch API
+// 🔁 Fetch image from NASA API
 function fetchImage(date) {
     const container = document.getElementById("current-image-container");
 
@@ -34,17 +41,22 @@ function fetchImage(date) {
     fetch(`https://api.nasa.gov/planetary/apod?date=${date}&api_key=${API_KEY}`)
         .then(res => res.json())
         .then(data => {
-            if (data.code) {
-                throw new Error(data.msg);
+            console.log("API Response:", data);
+
+            // ❌ Handle API error
+            if (data.code || data.error) {
+                throw new Error(data.msg || data.error.message);
             }
+
             displayImage(data);
         })
-        .catch(() => {
-            showError("Failed to load data. Try another date.");
+        .catch((err) => {
+            console.error("Fetch Error:", err);
+            showError("Failed to load data. Try another valid date.");
         });
 }
 
-// 🎯 Display result
+// 🎯 Display image or video
 function displayImage(data) {
     const container = document.getElementById("current-image-container");
 
@@ -63,13 +75,13 @@ function displayImage(data) {
     `;
 }
 
-// ❌ Show error
+// ❌ Show error message
 function showError(message) {
     const container = document.getElementById("current-image-container");
     container.innerHTML = `<p>${message}</p>`;
 }
 
-// 💾 Save search
+// 💾 Save search date
 function saveSearch(date) {
     let searches = JSON.parse(localStorage.getItem("searches")) || [];
 
@@ -81,7 +93,7 @@ function saveSearch(date) {
     addSearchToHistory();
 }
 
-// 📜 Display history
+// 📜 Display search history
 function addSearchToHistory() {
     const list = document.getElementById("search-history");
     list.innerHTML = "";
@@ -106,7 +118,10 @@ document.getElementById("search-form").addEventListener("submit", (e) => {
 
     const date = document.getElementById("search-input").value;
 
-    if (!date) return;
+    if (!date) {
+        showError("Please select a date.");
+        return;
+    }
 
     getImageOfTheDay(date);
 });
