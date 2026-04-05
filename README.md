@@ -44,3 +44,30 @@ https://api.nasa.gov/planetary/apod
 ---
 
 ## 📂 Project Structure
+project-folder/
+│
+├── index.html
+├── style.css
+├── script.js
+└── README.md
+
+
+---
+
+## ⚙️ Setup Instructions
+
+1. Clone the repository or download the files  
+2. Get your API key from NASA: https://api.nasa.gov/  
+3. Replace `YOUR_API_KEY` in `script.js` with your API key  
+4. Open `index.html` in your browser  
+
+---
+
+## 🚀 Deployment
+
+You can deploy this project using:
+
+- GitHub Pages  
+- Netlify  
+- Vercel  
+
