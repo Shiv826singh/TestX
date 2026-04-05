@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #0b0b0b;
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input, button {
+    padding: 10px;
+    font-size: 16px;
+}
+
+button {
+    cursor: pointer;
+}
+
+#current-image-container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    background-color: black;
+    border-radius: 10px;
+}
+
+img, iframe {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    cursor: pointer;
+    margin: 8px;
+    color: #4da6ff;
+}
+
+li:hover {
+    text-decoration: underline;
+}
