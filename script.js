@@ -1,6 +1,5 @@
-const API_KEY = "YOUR_API_KEY";
+const API_KEY = "DEMO_KEY"; // replace with your NASA API key
 
-// Run on page load
 document.addEventListener("DOMContentLoaded", () => {
     getCurrentImageOfTheDay();
     addSearchToHistory();
@@ -8,50 +7,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ✅ Get today's image
 function getCurrentImageOfTheDay() {
-    const currentDate = new Date().toISOString().split("T")[0];
-    fetchImage(currentDate);
+    const today = new Date().toISOString().split("T")[0];
+    fetchImage(today);
 }
 
-// ✅ Get image by date
+// ✅ Get image by selected date
 function getImageOfTheDay(date) {
+    const today = new Date().toISOString().split("T")[0];
+
+    // ❌ Prevent future date
+    if (date > today) {
+        showError("Future dates are not allowed.");
+        return;
+    }
+
     fetchImage(date);
     saveSearch(date);
 }
 
-// 🔁 Common API function
+// 🔁 Fetch API
 function fetchImage(date) {
     const container = document.getElementById("current-image-container");
 
     container.innerHTML = "<p>Loading...</p>";
 
     fetch(`https://api.nasa.gov/planetary/apod?date=${date}&api_key=${API_KEY}`)
-        .then(res => {
-            if (!res.ok) throw new Error("API Error");
-            return res.json();
+        .then(res => res.json())
+        .then(data => {
+            if (data.code) {
+                throw new Error(data.msg);
+            }
+            displayImage(data);
         })
-        .then(data => displayImage(data))
         .catch(() => {
-            container.innerHTML = "<p>Failed to load data. Try another date.</p>";
+            showError("Failed to load data. Try another date.");
         });
 }
 
-// 🎯 Display data
+// 🎯 Display result
 function displayImage(data) {
     const container = document.getElementById("current-image-container");
 
-    let mediaContent = "";
+    let media = "";
 
     if (data.media_type === "image") {
-        mediaContent = `<img src="${data.url}" alt="NASA Image"/>`;
+        media = `<img src="${data.url}" alt="NASA Image"/>`;
     } else {
-        mediaContent = `<iframe src="${data.url}" frameborder="0" allowfullscreen></iframe>`;
+        media = `<iframe src="${data.url}" frameborder="0" allowfullscreen></iframe>`;
     }
 
     container.innerHTML = `
         <h3>${data.title}</h3>
-        ${mediaContent}
+        ${media}
         <p>${data.explanation}</p>
     `;
+}
+
+// ❌ Show error
+function showError(message) {
+    const container = document.getElementById("current-image-container");
+    container.innerHTML = `<p>${message}</p>`;
 }
 
 // 💾 Save search
@@ -66,7 +81,7 @@ function saveSearch(date) {
     addSearchToHistory();
 }
 
-// 📜 Show history
+// 📜 Display history
 function addSearchToHistory() {
     const list = document.getElementById("search-history");
     list.innerHTML = "";
